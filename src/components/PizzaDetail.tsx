@@ -4,9 +4,11 @@ import Image from 'next/image'
 import Link from 'next/link'
 // import { useParams } from 'next/navigation'
 // import { useEffect, useState } from 'react'
-import RatingPanel from '@/components/RatingPanel'
+// import RatingPanel from '@/components/RatingPanel'
 import SizePicker from '@/components/SizePicker'
 import type { Pizza } from '@/lib/types'
+import RatingPanelServer from './RatingPanelServer'
+import { Suspense } from 'react'
 
 export default function PizzaDetail({ pizza }: { pizza: Pizza }) {
   //   const { id } = useParams<{ id: string }>()
@@ -63,7 +65,16 @@ export default function PizzaDetail({ pizza }: { pizza: Pizza }) {
         </div>
         <p className="text-lg">{pizza.description}</p>
         <SizePicker sizes={pizza.sizes} />
-        <RatingPanel pizzaId={pizza.id} />
+        <Suspense
+          fallback={
+            <section className="rounded-2xl bg-white p-5 ring-1 ring-black/5">
+              <h2 className="text-lg font-bold">Customer Rating</h2>
+              <p className="mt-1 text-ink/70">Load rate…</p>
+            </section>
+          }
+        >
+          <RatingPanelServer pizzaId={pizza.id} />
+        </Suspense>
       </div>
     </article>
   )
