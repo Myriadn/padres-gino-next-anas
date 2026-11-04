@@ -1,6 +1,7 @@
 'use client'
 
-import { use, useState } from 'react'
+import { toggleFavoriteAction } from '@/app/actions'
+import { use, useOptimistic, useState, useTransition } from 'react'
 
 export default function FavoriteButton({
   pizzaId,
@@ -11,32 +12,46 @@ export default function FavoriteButton({
   pizzaName: string
   favoriteIdsPromise: Promise<string[]>
 }) {
-  const favoriteIds = use(favoriteIdsPromise)
-  const [isFavorite, setIsFavorite] = useState(favoriteIds.includes(pizzaId))
+  // const favoriteIds = use(favoriteIdsPromise)
+  // const [isFavorite, setIsFavorite] = useState(favoriteIds.includes(pizzaId))
+  const isFavorite = use(favoriteIdsPromise).includes(pizzaId)
+  const [optimisticFavorite, setOptimisticFavorite] = useOptimistic(isFavorite)
+  const [isPending, startTransition] = useTransition()
   const [error, setError] = useState<string | null>(null)
 
-  async function toggle() {
+  function handleClick() {
     setError(null)
-    const res = await fetch(`/api/favorites/${pizzaId}`, { method: 'POST' })
-    if (!res.ok) {
-      setError('Gagal menyimpan favorit. Coba lagi.')
-      return
-    }
-    const body = (await res.json()) as { isFavorite: boolean }
-    setIsFavorite(body.isFavorite)
-    window.dispatchEvent(new Event('favorites-changed'))
+    startTransition(async () => {
+      setOptimisticFavorite(!optimisticFavorite)
+      const result = await toggleFavoriteAction(pizzaId)
+
+      if (!result.ok) setError(result.error)
+    })
   }
+
+  // async function toggle() {
+  //   setError(null)
+  //   const res = await fetch(`/api/favorites/${pizzaId}`, { method: 'POST' })
+  //   if (!res.ok) {
+  //     setError('Gagal menyimpan favorit. Coba lagi.')
+  //     return
+  //   }
+  //   const body = (await res.json()) as { isFavorite: boolean }
+  //   setIsFavorite(body.isFavorite)
+  //   window.dispatchEvent(new Event('favorites-changed'))
+  // }
 
   return (
     <div className="flex shrink-0 flex-col items-end">
       <button
         type="button"
-        onClick={() => void toggle()}
-        aria-pressed={isFavorite}
-        aria-label={`${isFavorite ? 'Hapus' : 'Tambah'} ${pizzaName} ${isFavorite ? 'dari' : 'ke'} favorit`}
-        className="text-2xl leading-none text-brand"
+        onClick={handleClick}
+        aria-pressed={optimisticFavorite}
+        aria-busy={isPending}
+        aria-label={`${optimisticFavorite ? 'Hapus' : 'Tambah'} ${pizzaName} ${optimisticFavorite ? 'dari' : 'ke'} favorit`}
+        className={`text-2xl leading-none text-brand transition-opacity ${isPending ? 'opacity-50' : ''} `}
       >
-        {isFavorite ? '♥' : '♡'}
+        {optimisticFavorite ? '♥' : '♡'}
       </button>
       {error && (
         <p
