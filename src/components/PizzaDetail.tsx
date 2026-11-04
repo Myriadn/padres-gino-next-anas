@@ -1,47 +1,47 @@
-"use client";
+// 'use client'
 
-import Image from "next/image";
-import Link from "next/link";
-import { useParams } from "next/navigation";
-import { useEffect, useState } from "react";
-import RatingPanel from "@/components/RatingPanel";
-import SizePicker from "@/components/SizePicker";
-import type { Pizza } from "@/lib/types";
+import Image from 'next/image'
+import Link from 'next/link'
+// import { useParams } from 'next/navigation'
+// import { useEffect, useState } from 'react'
+import RatingPanel from '@/components/RatingPanel'
+import SizePicker from '@/components/SizePicker'
+import type { Pizza } from '@/lib/types'
 
-export default function PizzaDetail() {
-  const { id } = useParams<{ id: string }>();
-  const [pizza, setPizza] = useState<Pizza | null>(null);
-  const [status, setStatus] = useState<"loading" | "ready" | "missing">(
-    "loading",
-  );
+export default function PizzaDetail({ pizza }: { pizza: Pizza }) {
+  //   const { id } = useParams<{ id: string }>()
+  //   const [pizza, setPizza] = useState<Pizza | null>(null)
+  //   const [status, setStatus] = useState<'loading' | 'ready' | 'missing'>(
+  //     'loading',
+  //   )
 
-  useEffect(() => {
-    async function load() {
-      const res = await fetch(`/api/pizzas/${id}`);
-      if (!res.ok) {
-        setStatus("missing");
-        return;
-      }
-      setPizza((await res.json()) as Pizza);
-      setStatus("ready");
-    }
-    void load();
-  }, [id]);
+  //   useEffect(() => {
+  //     async function load() {
+  //       const res = await fetch(`/api/pizzas/${id}`)
+  //       if (!res.ok) {
+  //         setStatus('missing')
+  //         return
+  //       }
+  //       setPizza((await res.json()) as Pizza)
+  //       setStatus('ready')
+  //     }
+  //     void load()
+  //   }, [id])
 
-  if (status === "loading") {
-    return <p className="py-16 text-center text-lg">Memuat pizza…</p>;
-  }
+  //   if (status === 'loading') {
+  //     return <p className="py-16 text-center text-lg">Memuat pizza…</p>
+  //   }
 
-  if (status === "missing" || !pizza) {
-    return (
-      <div className="py-16 text-center">
-        <h1 className="text-2xl font-bold">Pizza tidak ditemukan</h1>
-        <Link href="/" className="mt-4 inline-block text-brand underline">
-          Kembali ke menu
-        </Link>
-      </div>
-    );
-  }
+  //   if (status === 'missing' || !pizza) {
+  //     return (
+  //       <div className="py-16 text-center">
+  //         <h1 className="text-2xl font-bold">Pizza tidak ditemukan</h1>
+  //         <Link href="/" className="mt-4 inline-block text-brand underline">
+  //           Kembali ke menu
+  //         </Link>
+  //       </div>
+  //     )
+  //   }
 
   return (
     <article className="grid gap-8 md:grid-cols-2">
@@ -66,5 +66,5 @@ export default function PizzaDetail() {
         <RatingPanel pizzaId={pizza.id} />
       </div>
     </article>
-  );
+  )
 }
