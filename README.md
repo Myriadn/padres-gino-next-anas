@@ -18,3 +18,18 @@ Classroom switches:
 - `DEMO_READ_LATENCY_MS` / `DEMO_WRITE_LATENCY_MS` in `.env.local` change the artificial delay (defaults 300 / 800 ms).
 
 Each step of the workshop is a git tag. See `README-DAY1.md`.
+
+## Tabel Audit
+
+| Component         | Server/Client                           | Butuh browser?                                           | Perlu `'use client'` sendiri? |
+| ----------------- | --------------------------------------- | -------------------------------------------------------- | ----------------------------- |
+| Header            | Server, kecuali punya state/menu mobile | Tidak, jika hanya markup                                 | Tidak                         |
+| MenuExplorer      | Client                                  | `useState` untuk filter                                  | Ya                            |
+| MenuToolbar       | Client                                  | Input dan event handler                                  | Ya                            |
+| PizzaCard         | Client dalam struktur sekarang          | Berada di bawah `MenuExplorer`; memakai `FavoriteButton` | Ya dalam struktur sekarang    |
+| FavoriteButton    | Client                                  | `use`, state, transition, Server Action                  | Ya                            |
+| SizePicker        | Client                                  | Pilihan ukuran/event handler                             | Ya                            |
+| RatingPanel       | Client                                  | Form optimistic state dan transition                     | Ya                            |
+| FailureToggle     | Client                                  | State/event handler                                      | Ya                            |
+| PizzaOfTheDay     | Server                                  | Tidak                                                    | Tidak                         |
+| DismissibleBanner | Client                                  | `useState` untuk dismiss                                 | Ya                            |
