@@ -111,3 +111,16 @@ export async function addRating(id: string, stars: number): Promise<void> {
     stars,
   ])
 }
+
+export async function getPizzaOfTheDay(): Promise<Pizza | null> {
+  'use cache'
+  cacheLife('days')
+  cacheTag('menu')
+
+  const pizzas = await getPizzas()
+
+  if (pizzas.length === 0) return null
+
+  const day = Math.floor(Date.now() / 86_400_000)
+  return pizzas[day % pizzas.length]
+}
